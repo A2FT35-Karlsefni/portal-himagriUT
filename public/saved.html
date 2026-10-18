@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel Tersimpan - NusantaraPost</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center space-x-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-bold text-xl">N</div>
+        <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">NusantaraPost</span>
+      </a>
+      <div class="flex items-center space-x-4">
+        <button onclick="toggleTheme()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+        <div id="navbar-auth-section"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 py-10 w-full">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center">
+          <svg class="w-6 h-6 mr-2 text-amber-500 fill-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+          Daftar Bacaan & Artikel Tersimpan
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">Artikel yang Anda simpan untuk dibaca kembali di waktu luang.</p>
+      </div>
+    </div>
+
+    <div id="saved-list" class="space-y-4">
+      <!-- Populated dynamically -->
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Must wait for checkAuth
+      setTimeout(loadSavedArticles, 200);
+    });
+
+    async function loadSavedArticles() {
+      if (!AppState.user) {
+        document.getElementById('saved-list').innerHTML = `
+          <div class="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8">
+            <h3 class="text-base font-bold text-slate-700 dark:text-slate-200">Silakan Masuk Terlebih Dahulu</h3>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Fitur daftar bacaan hanya tersedia untuk pengguna terdaftar.</p>
+            <a href="/login" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Masuk Sekarang</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/articles/user/bookmarks');
+        const data = await res.json();
+        const container = document.getElementById('saved-list');
+
+        if (data.success && data.data.length > 0) {
+          container.innerHTML = data.data.map(art => `
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div class="flex items-start space-x-4 flex-1">
+                <img src="${art.cover_image}" class="w-20 h-20 rounded-xl object-cover" />
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">${art.category_name}</span>
+                  <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white hover:text-indigo-600 transition mb-1">
+                    <a href="/artikel/${art.slug}">${art.title}</a>
+                  </h3>
+                  <p class="text-xs text-slate-400 line-clamp-1 mb-2">${art.excerpt}</p>
+                  <div class="text-[11px] text-slate-400 flex items-center space-x-3">
+                    <span>Oleh: ${art.author_name}</span>
+                    <span>•</span>
+                    <span>⏱ ${art.reading_time} menit baca</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2 self-end sm:self-center">
+                <a href="/artikel/${art.slug}" class="px-3 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition">
+                  Baca
+                </a>
+                <button onclick="removeBookmark(${art.id})" class="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition" title="Hapus dari tersimpan">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `
+            <div class="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8">
+              <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+              <h4 class="text-base font-bold text-slate-700 dark:text-slate-200">Daftar bacaan masih kosong</h4>
+              <p class="text-xs text-slate-400 mt-1 mb-4">Simpan artikel yang Anda sukai dengan menekan ikon penanda (bookmark) pada artikel.</p>
+              <a href="/" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Jelajahi Artikel</a>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error('Failed to load bookmarks', err);
+      }
+    }
+
+    async function removeBookmark(id) {
+      try {
+        const res = await fetch(`/api/articles/${id}/bookmark`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Artikel dihapus dari daftar bacaan.', 'info');
+          loadSavedArticles();
+        }
+      } catch (err) {
+        showToast('Gagal mengubah bookmark', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

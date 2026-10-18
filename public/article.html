@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Artikel - NusantaraPost</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center space-x-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-600/30">N</div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">NusantaraPost</span>
+          <span class="block text-[10px] font-medium text-slate-400 -mt-1 tracking-wider uppercase">Portal Artikel</span>
+        </div>
+      </a>
+
+      <div class="flex items-center space-x-4">
+        <button onclick="toggleTheme()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+        <div id="navbar-auth-section"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Article Container -->
+  <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center space-x-2 text-xs text-slate-400 mb-6">
+      <a href="/" class="hover:text-indigo-600 transition">Beranda</a>
+      <span>/</span>
+      <span id="breadcrumb-category">Kategori</span>
+      <span>/</span>
+      <span class="truncate max-w-[200px]" id="breadcrumb-title">Artikel</span>
+    </nav>
+
+    <!-- Article Content Wrapper -->
+    <div id="article-loader" class="space-y-4">
+      <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+      <div class="h-6 w-1/3 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+      <div class="h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse"></div>
+    </div>
+
+    <article id="article-main" class="hidden">
+      <!-- Article Header -->
+      <div class="mb-6">
+        <div class="flex items-center space-x-2.5 mb-3">
+          <span id="article-category-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></span>
+          <span id="article-featured-badge" class="hidden px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+            ★ Pilihan Utama
+          </span>
+          <span id="article-status-badge" class="hidden px-2.5 py-1 rounded-full text-xs font-bold"></span>
+        </div>
+
+        <h1 id="article-title" class="text-2xl sm:text-4xl font-black text-slate-950 dark:text-white leading-tight mb-4"></h1>
+
+        <p id="article-excerpt" class="text-base sm:text-lg text-slate-500 dark:text-slate-300 font-medium leading-relaxed mb-6"></p>
+
+        <!-- Author meta bar -->
+        <div class="flex flex-wrap items-center justify-between py-4 border-y border-slate-200 dark:border-slate-800 gap-4">
+          <div class="flex items-center space-x-3">
+            <img id="author-avatar" src="" alt="" class="w-11 h-11 rounded-full object-cover border-2 border-indigo-500 shadow-sm" />
+            <div>
+              <a id="author-name-link" href="#" class="font-bold text-sm text-slate-900 dark:text-white hover:text-indigo-600 transition"></a>
+              <p class="text-xs text-slate-400" id="author-role-label"></p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4 text-xs text-slate-400 font-medium">
+            <span id="article-date"></span>
+            <span>•</span>
+            <span id="article-reading-time"></span>
+            <span>•</span>
+            <span id="article-views"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cover Image -->
+      <div class="rounded-3xl overflow-hidden shadow-xl mb-8 bg-slate-900">
+        <img id="article-cover" src="" alt="" class="w-full max-h-[500px] object-cover" />
+      </div>
+
+      <!-- Body Content -->
+      <div id="article-body" class="article-body mb-8"></div>
+
+      <!-- Tags list -->
+      <div class="flex flex-wrap items-center gap-2 mb-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <span class="text-xs font-bold text-slate-400 mr-2">Tagar:</span>
+        <div id="article-tags" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Interactive Action Floating / Sticky Bar -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-lg mb-10 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <!-- Like Button -->
+          <button id="btn-like" onclick="handleLike()" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-50 hover:text-rose-600">
+            <svg class="w-5 h-5 heart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <span id="like-count">0</span>
+            <span class="hidden sm:inline">Suka</span>
+          </button>
+
+          <!-- Bookmark Button -->
+          <button id="btn-bookmark" onclick="handleBookmark()" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-amber-50 hover:text-amber-600">
+            <svg class="w-5 h-5 bookmark-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <span id="bookmark-label">Simpan</span>
+          </button>
+        </div>
+
+        <!-- Share buttons -->
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-slate-400 font-semibold hidden sm:inline">Bagikan:</span>
+          <button onclick="shareWhatsApp()" class="p-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="Kirim ke WhatsApp">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086.159.058 1.011.477 1.184.564.173.087.289.13.332.203.043.072.043.419-.101.824z"/></svg>
+          </button>
+          <button onclick="copyArticleLink()" class="p-2 rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 transition" title="Salin Tautan">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Author Profile Card -->
+      <div class="bg-gradient-to-r from-indigo-50/50 to-violet-50/50 dark:from-slate-900 dark:to-indigo-950/20 border border-indigo-100 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-12 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+        <img id="author-card-avatar" src="" alt="" class="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500 shadow-md" />
+        <div class="flex-1">
+          <div class="flex items-center space-x-2 mb-1">
+            <h3 id="author-card-name" class="text-lg font-bold text-slate-900 dark:text-white"></h3>
+            <span id="author-card-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">Penulis</span>
+          </div>
+          <p id="author-card-bio" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed"></p>
+          <a id="author-card-link" href="#" class="inline-flex items-center text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+            Lihat semua tulisan penulis &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <section id="comments-section" class="mb-16">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center">
+            <span>Diskusi & Komentar</span>
+            <span id="comments-count-badge" class="ml-2.5 text-xs bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold px-2.5 py-0.5 rounded-full">0</span>
+          </h3>
+        </div>
+
+        <!-- Add Comment Box -->
+        <div id="comment-form-container" class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
+          <div id="comment-auth-alert" class="hidden mb-3 p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 rounded-xl text-xs flex items-center justify-between">
+            <span>Anda belum masuk. Silakan login atau pilih peran demo untuk berkomentar.</span>
+            <button onclick="switchDemo('reader')" class="font-bold underline">Login Demo Pembaca</button>
+          </div>
+
+          <form id="comment-form" onsubmit="submitComment(event)">
+            <input type="hidden" id="reply-parent-id" value="" />
+            <div id="replying-to-banner" class="hidden items-center justify-between bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-lg text-xs mb-2">
+              <span id="replying-to-text">Membalas komentar...</span>
+              <button type="button" onclick="cancelReply()" class="text-slate-400 hover:text-rose-500 font-bold">Batal</button>
+            </div>
+            <textarea 
+              id="comment-input"
+              rows="3" 
+              placeholder="Tulis tanggapan atau opini Anda secara santun..." 
+              class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-800 dark:text-slate-100 transition resize-none"
+              required
+            ></textarea>
+            <div class="flex justify-between items-center mt-3">
+              <span class="text-[11px] text-slate-400">Gunakan bahasa yang membangun dan menghormati sesama pembaca.</span>
+              <button type="submit" id="btn-submit-comment" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition">
+                Kirim Komentar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Comments Tree List -->
+        <div id="comments-tree" class="space-y-4">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script>
+    let currentArticle = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Slug from URL path (/artikel/:slug)
+      const pathParts = window.location.pathname.split('/');
+      const slug = pathParts[pathParts.length - 1];
+      
+      if (!slug) {
+        window.location.href = '/';
+        return;
+      }
+
+      await loadArticleDetail(slug);
+      loadComments();
+    });
+
+    async function loadArticleDetail(slug) {
+      try {
+        const res = await fetch(`/api/articles/${slug}`);
+        const data = await res.json();
+
+        if (!data.success) {
+          showToast(data.message, 'error');
+          document.getElementById('article-loader').innerHTML = `
+            <div class="text-center py-20">
+              <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Artikel Tidak Ditemukan</h2>
+              <p class="text-slate-400 mt-2">${data.message}</p>
+              <a href="/" class="mt-4 inline-block px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold">Kembali ke Beranda</a>
+            </div>
+          `;
+          return;
+        }
+
+        currentArticle = data.data;
+        document.title = `${currentArticle.title} - NusantaraPost`;
+
+        // Breadcrumbs
+        document.getElementById('breadcrumb-category').textContent = currentArticle.category_name;
+        document.getElementById('breadcrumb-title').textContent = currentArticle.title;
+
+        // Article Meta & Title
+        document.getElementById('article-title').textContent = currentArticle.title;
+        document.getElementById('article-excerpt').textContent = currentArticle.excerpt;
+
+        const catBadge = document.getElementById('article-category-badge');
+        catBadge.textContent = currentArticle.category_name;
+        catBadge.className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${getCategoryColor(currentArticle.category_color)}`;
+
+        if (currentArticle.is_featured) {
+          document.getElementById('article-featured-badge').classList.remove('hidden');
+        }
+
+        // Status badge for draft or pending
+        if (currentArticle.status !== 'published') {
+          const statusBadge = document.getElementById('article-status-badge');
+          statusBadge.classList.remove('hidden');
+          statusBadge.textContent = `Status: ${currentArticle.status.toUpperCase()}`;
+          statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-500 border border-amber-500/40';
+        }
+
+        // Author bar
+        document.getElementById('author-avatar').src = currentArticle.author_avatar;
+        document.getElementById('author-name-link').textContent = currentArticle.author_name;
+        document.getElementById('author-name-link').href = `/penulis/${currentArticle.author_id}`;
+        document.getElementById('author-role-label').textContent = `@${currentArticle.author_username}`;
+
+        document.getElementById('article-date').textContent = new Date(currentArticle.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('article-reading-time').textContent = `⏱ ${currentArticle.reading_time} menit baca`;
+        document.getElementById('article-views').textContent = `👁 ${currentArticle.view_count} pembaca`;
+
+        // Cover & Body
+        document.getElementById('article-cover').src = currentArticle.cover_image;
+        document.getElementById('article-body').innerHTML = currentArticle.content;
+
+        // Tags
+        const tagsContainer = document.getElementById('article-tags');
+        if (currentArticle.tags && currentArticle.tags.length > 0) {
+          tagsContainer.innerHTML = currentArticle.tags.map(t => `
+            <a href="/?tag=${t.slug}" class="text-xs px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition">
+              #${t.name}
+            </a>
+          `).join('');
+        } else {
+          tagsContainer.innerHTML = '<span class="text-xs text-slate-400">Tanpa tagar</span>';
+        }
+
+        // Like & Bookmark state
+        updateLikeUI(currentArticle.is_liked, currentArticle.likes_count);
+        updateBookmarkUI(currentArticle.is_bookmarked);
+
+        // Author Card
+        document.getElementById('author-card-avatar').src = currentArticle.author_avatar;
+        document.getElementById('author-card-name').textContent = currentArticle.author_name;
+        document.getElementById('author-card-bio').textContent = currentArticle.author_bio || 'Penulis aktif di NusantaraPost.';
+        document.getElementById('author-card-link').href = `/penulis/${currentArticle.author_id}`;
+
+        // Show main
+        document.getElementById('article-loader').classList.add('hidden');
+        document.getElementById('article-main').classList.remove('hidden');
+
+      } catch (err) {
+        console.error('Error loading article', err);
+      }
+    }
+
+    function updateLikeUI(isLiked, totalLikes) {
+      const btn = document.getElementById('btn-like');
+      const countEl = document.getElementById('like-count');
+      const icon = btn.querySelector('.heart-icon');
+
+      countEl.textContent = totalLikes;
+      if (isLiked) {
+        btn.classList.add('bg-rose-50', 'text-rose-600', 'dark:bg-rose-950/40');
+        icon.classList.add('fill-rose-600');
+      } else {
+        btn.classList.remove('bg-rose-50', 'text-rose-600', 'dark:bg-rose-950/40');
+        icon.classList.remove('fill-rose-600');
+      }
+    }
+
+    function updateBookmarkUI(isBookmarked) {
+      const btn = document.getElementById('btn-bookmark');
+      const icon = btn.querySelector('.bookmark-icon');
+      const label = document.getElementById('bookmark-label');
+
+      if (isBookmarked) {
+        btn.classList.add('bg-amber-50', 'text-amber-600', 'dark:bg-amber-950/40');
+        icon.classList.add('fill-amber-500');
+        label.textContent = 'Tersimpan';
+      } else {
+        btn.classList.remove('bg-amber-50', 'text-amber-600', 'dark:bg-amber-950/40');
+        icon.classList.remove('fill-amber-500');
+        label.textContent = 'Simpan';
+      }
+    }
+
+    async function handleLike() {
+      if (!AppState.user) {
+        showToast('Silakan masuk terlebih dahulu untuk menyukai artikel.', 'warning');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/articles/${currentArticle.id}/like`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          updateLikeUI(data.is_liked, data.total_likes);
+          showToast(data.message, 'success');
+        }
+      } catch (err) {
+        showToast('Gagal menyukai artikel', 'error');
+      }
+    }
+
+    async function handleBookmark() {
+      if (!AppState.user) {
+        showToast('Silakan masuk terlebih dahulu untuk menyimpan artikel.', 'warning');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/articles/${currentArticle.id}/bookmark`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          updateBookmarkUI(data.is_bookmarked);
+          showToast(data.message, 'success');
+        }
+      } catch (err) {
+        showToast('Gagal menyimpan artikel', 'error');
+      }
+    }
+
+    function copyArticleLink() {
+      navigator.clipboard.writeText(window.location.href);
+      showToast('Tautan artikel berhasil disalin ke papan klip!', 'info');
+    }
+
+    function shareWhatsApp() {
+      const url = encodeURIComponent(window.location.href);
+      const title = encodeURIComponent(currentArticle ? currentArticle.title : '');
+      window.open(`https://api.whatsapp.com/send?text=${title}%20${url}`, '_blank');
+    }
+
+    // Comment functions
+    async function loadComments() {
+      if (!currentArticle) return;
+      try {
+        const res = await fetch(`/api/comments/article/${currentArticle.id}`);
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('comments-count-badge').textContent = data.total;
+          renderCommentsTree(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to load comments', err);
+      }
+    }
+
+    function renderCommentsTree(comments) {
+      const container = document.getElementById('comments-tree');
+      if (comments.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400 text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            Belum ada komentar. Jadilah yang pertama memberikan tanggapan!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = comments.map(c => renderSingleComment(c)).join('');
+    }
+
+    function renderSingleComment(c, isReply = false) {
+      const canDelete = AppState.user && (AppState.user.id === c.user_id || AppState.user.role === 'admin' || AppState.user.role === 'editor');
+
+      return `
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 transition ${isReply ? 'ml-6 sm:ml-10 border-l-2 border-l-indigo-500' : ''}">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center space-x-2.5">
+              <img src="${c.user_avatar}" alt="${c.user_name}" class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="font-bold text-xs text-slate-900 dark:text-white">${c.user_name}</span>
+                  <span class="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">${c.user_role}</span>
+                </div>
+                <span class="text-[10px] text-slate-400">${formatTimeAgo(c.created_at)}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button onclick="setReply(${c.id}, '${c.user_name}')" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                Balas
+              </button>
+              ${canDelete ? `
+                <button onclick="deleteComment(${c.id})" class="text-xs text-rose-500 hover:text-rose-700" title="Hapus komentar">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed pl-10">
+            ${c.content}
+          </p>
+
+          ${c.replies && c.replies.length > 0 ? `
+            <div class="mt-4 space-y-3">
+              ${c.replies.map(r => renderSingleComment(r, true)).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function setReply(commentId, authorName) {
+      document.getElementById('reply-parent-id').value = commentId;
+      document.getElementById('replying-to-banner').classList.remove('hidden');
+      document.getElementById('replying-to-banner').classList.add('flex');
+      document.getElementById('replying-to-text').textContent = `Membalas komentar dari ${authorName}`;
+      document.getElementById('comment-input').focus();
+    }
+
+    function cancelReply() {
+      document.getElementById('reply-parent-id').value = '';
+      document.getElementById('replying-to-banner').classList.add('hidden');
+      document.getElementById('replying-to-banner').classList.remove('flex');
+    }
+
+    async function submitComment(e) {
+      e.preventDefault();
+      if (!AppState.user) {
+        showToast('Silakan masuk terlebih dahulu untuk mengirim komentar.', 'warning');
+        return;
+      }
+
+      const content = document.getElementById('comment-input').value.trim();
+      const parentId = document.getElementById('reply-parent-id').value;
+
+      if (!content) return;
+
+      try {
+        const res = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            article_id: currentArticle.id,
+            parent_id: parentId ? parseInt(parentId) : null,
+            content
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          document.getElementById('comment-input').value = '';
+          cancelReply();
+          loadComments();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Gagal mengirim komentar', 'error');
+      }
+    }
+
+    async function deleteComment(commentId) {
+      if (!confirm('Apakah Anda yakin ingin menghapus komentar ini?')) return;
+
+      try {
+        const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          loadComments();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Gagal menghapus komentar', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

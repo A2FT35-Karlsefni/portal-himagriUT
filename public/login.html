@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk Akun - NusantaraPost</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-4 transition-colors">
+
+  <div class="max-w-md w-full">
+    <!-- Brand -->
+    <div class="text-center mb-8">
+      <a href="/" class="inline-flex items-center space-x-2.5">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-indigo-600/30">N</div>
+        <div class="text-left">
+          <span class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">NusantaraPost</span>
+          <span class="block text-[11px] font-medium text-slate-400 -mt-1 tracking-wider uppercase">Portal Artikel Multi-Level</span>
+        </div>
+      </a>
+      <h2 class="text-xl font-bold mt-4 text-slate-900 dark:text-white">Selamat Datang Kembali</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Masuk ke akun Anda atau pilih akun demo uji coba di bawah.</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
+      <form id="login-form" onsubmit="handleFormLogin(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Email atau Username</label>
+            <input 
+              type="text" 
+              id="login-input" 
+              placeholder="admin@portal.com atau admin" 
+              required
+              class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kata Sandi</label>
+            <input 
+              type="password" 
+              id="password-input" 
+              placeholder="••••••••" 
+              required
+              class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white transition"
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition duration-200"
+          >
+            Masuk ke Portal
+          </button>
+        </div>
+      </form>
+
+      <!-- Demo Accounts Quick Switcher Box -->
+      <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">
+          ⚡ 1-Klik Masuk Akun Demo (Uji Akses Multi-Level)
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button onclick="quickDemoLogin('admin', 'admin123')" class="p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition text-left flex items-center space-x-2">
+            <span>👑</span>
+            <div>
+              <div class="text-[11px]">Admin</div>
+              <div class="text-[9px] text-slate-400 font-normal">admin123</div>
+            </div>
+          </button>
+
+          <button onclick="quickDemoLogin('editor', 'editor123')" class="p-2.5 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 font-bold hover:bg-amber-100 transition text-left flex items-center space-x-2">
+            <span>✍️</span>
+            <div>
+              <div class="text-[11px]">Editor</div>
+              <div class="text-[9px] text-slate-400 font-normal">editor123</div>
+            </div>
+          </button>
+
+          <button onclick="quickDemoLogin('penulis', 'penulis123')" class="p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-100 transition text-left flex items-center space-x-2">
+            <span>📝</span>
+            <div>
+              <div class="text-[11px]">Penulis</div>
+              <div class="text-[9px] text-slate-400 font-normal">penulis123</div>
+            </div>
+          </button>
+
+          <button onclick="quickDemoLogin('pembaca', 'pembaca123')" class="p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-300 font-bold hover:bg-indigo-100 transition text-left flex items-center space-x-2">
+            <span>📖</span>
+            <div>
+              <div class="text-[11px]">Pembaca</div>
+              <div class="text-[9px] text-slate-400 font-normal">pembaca123</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register link -->
+    <p class="text-center text-xs text-slate-500 mt-6">
+      Belum memiliki akun? <a href="/register" class="text-indigo-600 font-bold hover:underline">Daftar sekarang</a>
+    </p>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    async function handleFormLogin(e) {
+      e.preventDefault();
+      const login = document.getElementById('login-input').value.trim();
+      const password = document.getElementById('password-input').value;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ login, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          AppState.user = data.user;
+          setTimeout(() => {
+            window.location.href = data.user.role === 'reader' ? '/' : '/dashboard';
+          }, 500);
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (err) {
+        showToast('Gagal terhubung ke server', 'error');
+      }
+    }
+
+    function quickDemoLogin(username, pass) {
+      document.getElementById('login-input').value = username;
+      document.getElementById('password-input').value = pass;
+      document.getElementById('login-form').dispatchEvent(new Event('submit'));
+    }
+  </script>
+</body>
+</html>
